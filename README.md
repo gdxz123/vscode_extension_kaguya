@@ -1,6 +1,6 @@
 # ⭐  kaguya
 
-Languages: [简体中文](./README.zh.md) | English
+Languages: [简体中文](https://github.com/gdxz123/vscode_extension_kaguya/blob/master/README_zh.md) | English
 
 ## Summary
 
