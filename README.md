@@ -12,3 +12,8 @@ Languages: [简体中文](https://github.com/gdxz123/vscode_extension_kaguya/blo
 2. Press `Ctrl + Shift + P`（MacOS `Command + Shift + P`）to click "Hello Kaguya"
 6. Have fun! Try to write your paper in VSCode.
 
+
+
+
+
+<img src="https://github.com/gdxz123/vscode_extension_kaguya/blob/master/kaguya.png?raw=true" width=300 height=300>
