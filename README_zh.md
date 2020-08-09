@@ -12,3 +12,7 @@
 2. 按 `Ctrl + Shift + P`（MacOS `Command + Shift + P`）然后选择 "Hello Kaguya" 开启插件
 6. 开始您的写作吧，享受有人陪伴的写作体验吧～
 
+<br/>
+<br/>
+
+<img src="https://github.com/gdxz123/vscode_extension_kaguya/blob/master/kaguya.png?raw=true" width=300 height=300>
