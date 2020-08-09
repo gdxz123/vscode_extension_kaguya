@@ -1,6 +1,6 @@
 # ⭐  辉夜陪你写作业
 
-语言:  简体中文 | [English](./README.zh.md)
+语言:  简体中文 | [English](https://github.com/gdxz123/vscode_extension_kaguya/blob/master/README.md)
 
 ## 简介
 
