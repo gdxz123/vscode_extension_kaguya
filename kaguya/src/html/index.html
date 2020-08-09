@@ -1,0 +1,484 @@
+<html>
+<head> 
+<meta charset="utf-8" />
+<title>Kaguya</title>
+</head>
+<body>
+    <video id = "videoElement" src="./video/idle2.mp4" height="300" width="300" muted autoplay></video>
+    <button id="pipButtonElement">Picture in Picture</button>
+</body>
+
+<script type="text/javascript">
+var listenPort='7777'
+
+let idle2Path = "/video/idle2.mp4"
+
+var sayDuration = 0
+var sayTargetDuration = 0
+let loadPath = ""
+
+var isNeedIdom = false
+var isNeedLuxun = false
+
+var contratuNumCount = 800
+var isNeedContratulation = false
+
+var videoElement = document.getElementById("videoElement")
+let pipButtonElement = document.getElementById("pipButtonElement");
+pipButtonElement.addEventListener('click', async function() {
+    if (!document.pictureInPictureElement) {
+        videoElement.requestPictureInPicture().catch(error => {
+            alert.log("video can not pip")
+        })
+    }
+})
+
+videoElement.addEventListener("ended", function() {
+    if (isNeedContratulation || isNeedIdom || isNeedLuxun) {
+        if (isNeedContratulation) {
+            contratuNumCount = contratuNumCount * 2
+        }
+        if (sayDuration < sayTargetDuration) {
+            if (!(videoElement.src).includes(loadPath)) {
+                videoElement.src = "." + loadPath
+            }
+            videoElement.play()
+            sayDuration ++
+        } else {
+            playIdle()
+        }
+    } else {
+        playIdle()
+    }
+})
+
+// check text change
+setInterval(function() {
+    checkContentChange()
+}, 1000)
+
+function checkContentChange(variable) {
+    var xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function(){
+        if( xhr.readyState == 4){
+            if( xhr.status >= 200 && xhr.status < 300 || xhr.status == 304){
+                try {
+                    const jsonObj = JSON.parse(xhr.responseText)
+                    if (checkCount(jsonObj.allTxt)) {
+                        sayContratulation()
+                    } else if (checkIdiom(jsonObj.allTxt)) {
+                        sayIdiom()
+                    } else if (checkLuxunTalk(jsonObj.allTxt)) {
+                        sayLuxun()
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+    xhr.open("get", "http://127.0.0.1:" + listenPort +"/getContent", true);
+    xhr.send(null)
+}
+
+function checkCount(allText) {
+    if (allText.length > contratuNumCount) {
+        return true
+    } else {
+        return false
+    }
+}
+
+function checkIdiom(allText) {
+    for(var i = 0; i < idleArray.length; i++) {
+        let idleString = idleArray[i]
+        if (allText.includes(idleString) && idleHasCheckedArray[i] != "1") {
+            idleHasCheckedArray[i] = "1"
+            return true
+        }
+    }
+    return false
+}
+
+function checkLuxunTalk(allText) {
+    var reg = /".*"--鲁迅/g
+    var matchArray = allText.match(reg)
+    console.log(matchArray)
+    var resultTag = false
+    if (matchArray.length > 0) {
+        for (var i = 0; i < matchArray.length; i++) {
+            let containIndex = luxunArray.indexOf(matchArray[i])
+            if (containIndex > -1) {
+            } else {
+                 console.log(luxunHasCheckedArray)
+                let containCheckIndex = luxunHasCheckedArray.indexOf(matchArray[i])
+                if (containCheckIndex > -1) {
+
+                } else {
+                    luxunHasCheckedArray.push(matchArray[i])
+                    resultTag = true
+                    break
+                }
+            }
+        }
+    }
+    return resultTag
+}
+
+function sayLuxun() {
+    if (isNeedLuxun) {
+        return
+    } else {
+        isNeedLuxun = true
+        sayDuration = 0
+        sayTargetDuration = 5
+        loadPath = "/video/say2.mp4"
+    }
+}
+
+function sayContratulation() {
+    if (isNeedContratulation) {
+        return
+    } else {
+        isNeedContratulation = true
+        sayDuration = 0
+        sayTargetDuration = 5
+        loadPath = "/video/sayCons.mp4"
+    }
+}
+
+function sayIdiom() {
+    if (isNeedIdom) {
+        return
+    } else {
+        isNeedIdom = true
+        sayDuration = 0
+        sayTargetDuration = 5
+        loadPath = "/video/say2.mp4"
+    }
+}
+
+function playIdle() {
+    isNeedContratulation = false
+    isNeedLuxun = false
+    isNeedIdom = false
+    sayTargetDuration = 0
+    sayDuration = 0
+    loadPath = ""
+    if (!(videoElement.src).includes(idle2Path)) {
+        videoElement.src = "." + idle2Path
+    }
+    videoElement.play()
+}
+
+var idleHasCheckedArray = [new Array(1001).join(0).split('')]
+var idleArray = [
+"平易近人",
+"宽宏大度",
+"冰清玉洁",
+"持之以恒",
+"锲而不舍",
+"废寝忘食",
+"大义凛然",
+"临危不俱",
+"光明磊落",
+"不屈不挠",
+"鞠躬尽瘁",
+"死而后已",
+"料事如神",
+"足智多谋",
+"融会贯通",
+"学贯中西",
+"博古通今",
+"才华横溢",
+"出类拔萃",
+"博大精深",
+"集思广益",
+"举一反三",
+"憨态可掬",
+"文质彬彬",
+"风度翩翩",
+"相貌堂堂",
+"落落大方",
+"斗志昂扬",
+"意气风发",
+"威风凛凛",
+"容光焕发",
+"神采奕奕",
+"悠然自得",
+"眉飞色舞",
+"喜笑颜开",
+"神采奕奕",
+"欣喜若狂",
+"呆若木鸡",
+"喜出望外",
+"垂头丧气",
+"无动于衷",
+"勃然大怒",
+"能说会道",
+"巧舌如簧",
+"能言善辩",
+"滔滔不绝",
+"伶牙俐齿",
+"出口成章",
+"语惊四座",
+"娓娓而谈",
+"妙语连珠",
+"口若悬河",
+"三顾茅庐",
+"铁杵成针",
+"望梅止渴",
+"完璧归赵",
+"四面楚歌",
+"负荆请罪",
+"精忠报国",
+"手不释卷",
+"悬梁刺股",
+"凿壁偷光",
+"走马观花",
+"欢呼雀跃",
+"扶老携幼",
+"手舞足蹈",
+"促膝谈心",
+"前俯后仰",
+"奔走相告",
+"跋山涉水",
+"前赴后继",
+"张牙舞爪",
+"恩重如山",
+"深情厚谊",
+"手足情深",
+"形影不离",
+"血浓于水",
+"志同道合",
+"风雨同舟",
+"赤诚相待",
+"肝胆相照",
+"生死相依",
+"循序渐进",
+"日积月累",
+"温故知新",
+"勤能补拙",
+"笨鸟先飞",
+"学无止境",
+"学海无涯",
+"滴水穿石",
+"发奋图强",
+"开卷有益",
+"自相矛盾",
+"滥竽充数",
+"画龙点睛",
+"刻舟求剑",
+"守株待兔",
+"叶公好龙",
+"亡羊补牢",
+"画蛇添足",
+"掩耳盗铃",
+"买椟还珠",
+"无懈可击",
+"锐不可当",
+"雷厉风行",
+"震耳欲聋",
+"惊心动魄",
+"铺天盖地",
+"势如破竹",
+"气贯长虹",
+"万马奔腾",
+"如履平地",
+"春寒料峭",
+"春意盎然",
+"春暖花开",
+"满园春色",
+"春华秋实",
+"春风化雨",
+"骄阳似火",
+"暑气蒸人",
+"烈日炎炎",
+"秋风送爽",
+"秋高气爽",
+"秋色宜人",
+"冰天雪地",
+"寒气袭人",
+"寒冬腊月",
+"济济一堂",
+"热火朝天",
+"门庭若市",
+"万人空巷",
+"座无虚席",
+"高朋满座",
+"如火如荼",
+"蒸蒸日上",
+"欣欣向荣",
+"川流不息",
+"美不胜收",
+"蔚为壮观",
+"富丽堂皇",
+"金碧辉煌",
+"玉宇琼楼",
+"美妙绝伦",
+"巧夺天工",
+"锦上添花",
+"粉妆玉砌",
+"别有洞天",
+"锦绣河山",
+"高耸入云",
+"水天一色",
+"波光粼粼",
+"湖光山色",
+"重峦叠嶂",
+"山明水秀",
+"高山流水",
+"白练腾空",
+"烟波浩渺",
+"繁花似锦",
+"绿草如茵",
+"郁郁葱葱",
+"古树参天",
+"万木争荣",
+"百花齐放",
+"花团锦簇",
+"万紫千红",
+"桃红柳绿",
+"绿树成荫",
+"大雨如注",
+"滂沱大雨",
+"银装素裹",
+"皓月千里",
+"晨光熹微",
+"云雾迷蒙",
+"风清月朗",
+"春风化雨",
+"暴风骤雨",
+"风驰电掣",
+"兴国安邦",
+"翻山越岭",
+"百依百顺",
+"背井离乡",
+"长吁短叹",
+"道听途说",
+"丢盔弃甲",
+"调兵遣将",
+"甜言蜜语",
+"眼疾手快",
+"东倒西歪",
+"南辕北辙",
+"前赴后继",
+"前俯后继",
+"左推右挡",
+"承前启后",
+"舍近求远",
+"扬长避短",
+"弃旧图新",
+"优胜劣汰",
+"鬼鬼祟祟",
+"熙熙攘攘",
+"战战兢兢",
+"兢兢业业",
+"沸沸扬扬",
+"林林总总",
+"支支吾吾",
+"吞吞吐吐",
+"浩浩荡荡",
+"影影绰绰",
+"密密麻麻",
+"疏疏朗朗",
+"朝朝暮暮",
+"日日夜夜",
+"浑浑噩噩",
+"风风雨雨",
+"风风火火",
+"堂堂正正",
+"偷偷摸摸",
+"轰轰烈烈",
+"朦朦胧胧",
+"隐隐约约",
+"迷迷糊糊",
+"心心念念",
+"挨挨挤挤",
+"勤勤恳恳",
+"踉踉跄跄",
+"原原本本",
+"形形色色",
+"口口声声",
+"芸芸众生",
+"咄咄逼人",
+"头头是道",
+"津津有味",
+"津津乐道",
+"念念不忘",
+"空空如也",
+"源源不绝",
+"姗姗来迟",
+"面面相觑",
+"面面俱到",
+"振振有辞",
+"窃窃私语",
+"息息相关",
+"喋喋不休",
+"循循善诱",
+"郁郁寡欢",
+"彬彬有礼",
+"亭亭玉立",
+"铮铮铁骨",
+"飘飘欲仙",
+"夸夸其谈",
+"孜孜以求",
+"孜孜不倦",
+"莘莘学子",
+"跃跃欲试",
+"井井有条",
+"绰绰有余",
+"楚楚可怜",
+"胆小如鼠",
+"对牛弹琴",
+"杀鸡吓猴",
+"如狼似虎",
+"守株待兔",
+"狗急跳墙",
+"叶公好龙",
+"画蛇添足",
+"呆若木鸡",
+"人仰马翻",
+"顺手牵羊"]
+
+var luxunHasCheckedArray = []
+var luxunArray = [
+"希望是附丽于存在的，有存在，便有希望，有希望，便是光明。",
+"悲剧将人生的有价值的东西毁灭给人看，喜剧将那无价值的撕破给人看。",
+"伟大的心胸，应该表现出这样的气概——用笑脸来迎接悲惨的厄运，用百倍的勇气来应付一切的不幸。",
+"中国虽发明火药，却只会用来放烟花炮竹；发明罗盘，也是用来看风水。",
+"渡尽劫波兄弟在，相逢一笑泯恩仇。",
+"躲进小楼成一统，管它冬夏与春秋。",
+"游戏是儿童最正当的行为，玩具是儿童的天使。",
+"横眉冷对千夫指，俯首甘为孺子牛。",
+"真正的勇士，敢于直面惨淡的人生，敢于正视淋漓的鲜血这是怎样的哀痛者和幸福者？",
+"改造自己，总比禁止别人来得难。",
+"在行进时，也时时有人退伍，有人落荒，有人颓唐，有人叛变，然而只要无碍于进行，则越到后来，这队伍也就越成为纯粹、精锐的队伍了。",
+"单是说不行，要紧的是做。",
+"巨大的建筑，总是由一木一石叠起来的，我们何妨做做这一木一石呢？我时常做些零碎事，就是为此。",
+"空谈之类，是谈不久，也谈不出什麽来的，它始终被事实的镜子照出原形，拖出尾巴而去。",
+"无情未必真豪杰，怜子如何不丈夫。",
+"友谊是两颗心的真诚相待，而不是一颗心对另一颗心的敲打。",
+"以人为鉴，明白非常，是使人能够反省的妙法。",
+"父母对于子女，应该健全的产生，尽力的教育，完全的解放。",
+"时间就像海绵里的水，只要愿挤，总还是有的。",
+"死者倘不埋在活人心中，那就真真死掉了。",
+"只要能培一朵花，就不妨做做会朽的腐草。",
+"当我沉默的时候，我觉得充实；我将开口，同时感到空虚。",
+"死亡的生命已经朽腐。我对于这朽腐有大欢喜，因为我借此知道它还非空虚。",
+"但我坦然，欣然。我将大笑，我将歌唱。",
+"我自爱我的野草，但我憎恶这以野草作装饰的地面。",
+"待我成尘时，你将见我的微笑！",
+"不在沉默中爆发，就在沉默中灭亡。",
+"怀疑并不是缺点。总是疑，而并不下断语，这才是缺点。",
+"纠缠如毒蛇，执着如冤鬼。激烈得快的，也平和的快，甚至于也颓废的快。",
+"巨大的建筑，总是一木一石叠起来，我们何尝做做这一木一石呢？我时常做些零碎事，就是为此。",
+"宁可与敌人明打，不欲受同人暗算。",
+"唯独革命家，无论他生或死，都能给大家以幸福。",
+"凡事总需研究，才会明白。",
+"使一个人的有限的生命，更加有效，也即等于延长了人的生命。",
+"我的确时时解剖别人，然而更多的是无情地解剖我自己。",
+"走上人生的路途吧。前途很远，也很暗。然而不要怕，不怕的人面前才有路。",
+"人生最苦痛的是梦醒了无路可走。",
+"谦以待人，虚以接物。",
+"自由固不是钱所买到的，但能够为钱而卖掉。"]
+</script>
+</html>

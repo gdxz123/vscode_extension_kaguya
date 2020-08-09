@@ -1,6 +1,6 @@
 # ⭐  kaguya
 
-Languages: [简体中文](./README.zh.md) | English
+Languages: English
 
 ## Summary
 
